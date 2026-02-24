@@ -1,0 +1,25 @@
+anomalies:
+  - name: error_spike
+    description: "Too many errors in short time"
+    severity: HIGH
+    how_to_detect: "If ERROR logs > 100 in 5 minutes"
+
+  - name: slow_response
+    description: "Application response time too high"
+    severity: MEDIUM
+    how_to_detect: "If response time > 3 seconds"
+
+  - name: failed_logins
+    description: "Too many failed login attempts"
+    severity: HIGH
+    how_to_detect: "If failed logins > 50 in 10 minutes"
+
+  - name: service_down
+    description: "Service not responding"
+    severity: HIGH
+    how_to_detect: "No logs received from service in 5 minutes"
+
+  - name: database_overload
+    description: "Database running out of connections"
+    severity: MEDIUM
+    how_to_detect: "If DB connections > 90%"
