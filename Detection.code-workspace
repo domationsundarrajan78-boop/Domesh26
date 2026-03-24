@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "Detection"
+		},
+		{
+			"path": "log-monitoring-engine"
+		},
+		{
+			"path": "pipeline"
+		}
+	]
+}
