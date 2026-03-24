@@ -1,0 +1,4 @@
+{"timestamp": "2026-03-23", "level": "INFO", "message": "Login success"}
+{"timestamp": "2026-03-23", "level": "ERROR", "message": "Failed login"}
+{"timestamp": "2026-03-23", "level": "ERROR", "message": "Failed login"}
+{"timestamp": "2026-03-23", "level": "WARNING", "message": "Suspicious activity"}
