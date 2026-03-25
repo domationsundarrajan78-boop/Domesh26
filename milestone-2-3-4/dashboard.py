@@ -58,7 +58,7 @@ def filter_logs(logs):
 # =========================
 logs = []
 
-for i in range(200):
+for i in range(2000):
     raw = generate_log()
     parsed = parse_log(raw)
     processed = process_log(parsed)
