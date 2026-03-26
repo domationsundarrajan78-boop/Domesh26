@@ -1,4 +1,4 @@
-# Log Monitoring and Anomaly Detection System
+# High-Throughput Log Analytics & Monitoring Engine
 
 ## Overview
 This project is an end-to-end log monitoring system that performs log generation, parsing, processing, anomaly detection, and visualization using an interactive dashboard.
@@ -77,7 +77,7 @@ log-monitoring-system/
 ## How to Run the Project
 
 1. Clone the repository  
-git clone <your-repo-link>
+git clone <https://github.com/domationsundarrajan78-boop/Domesh26.git>
 
 2. Navigate to project folder  
 cd log-monitoring-system
