@@ -2,30 +2,32 @@ import smtplib
 from email.mime.text import MIMEText
 
 EMAIL = "domationsundarrajan78@gmail.com"
-PASSWORD = "eoxygzmrgvxfhypo"
+PASSWORD = "yssbwgyqtvajtewq"
 
 def send_alert(anomalies):
-    print("👉 send_alert function called")   # DEBUG
+    print("👉 send_alert function called")
 
     if not anomalies:
-        print("⚠️ No anomalies found, email not sent")
+        print("⚠️ No anomalies found")
         return
 
     message = "\n".join([str(log) for log in anomalies])
 
     msg = MIMEText(message)
-    msg["Subject"] = "🚨 Anomaly Report (First 100 Logs)"
+    msg["Subject"] = "🚨 Anomaly Alert"
     msg["From"] = EMAIL
     msg["To"] = EMAIL
 
     try:
         server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
 
-        print("👉 Logging in...")   # DEBUG
+        print("👉 Logging in...")
         server.login(EMAIL, PASSWORD)
 
-        print("👉 Sending email...")  # DEBUG
+        print("👉 Sending email...")
         server.send_message(msg)
 
         server.quit()

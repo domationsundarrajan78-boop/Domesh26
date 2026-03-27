@@ -14,6 +14,10 @@ from pipeline.generator import generate_log
 from pipeline.parser import parse_log
 from pipeline.processor import process_log
 
+# Detection + Alert
+from detection.anomaly import detect_anomaly
+from detection.alert import send_alert
+
 
 # =========================
 # PAGE CONFIG
@@ -34,7 +38,6 @@ levels = ["INFO", "WARNING", "ERROR", "CRITICAL"]
 selected_levels = st.sidebar.multiselect("Level", levels)
 
 show_only_anomalies = st.sidebar.checkbox("Show only anomalies")
-auto_refresh = st.sidebar.checkbox("Auto Refresh (5 sec)")
 
 
 # =========================
@@ -54,17 +57,19 @@ def filter_logs(logs):
 
 
 # =========================
-# GENERATE LOGS
+# LIVE LOG GENERATION
 # =========================
-logs = []
+if "logs" not in st.session_state:
+    st.session_state.logs = []
 
-for i in range(2000):
-    raw = generate_log()
-    parsed = parse_log(raw)
-    processed = process_log(parsed)
+raw = generate_log()
+parsed = parse_log(raw)
+processed = process_log(parsed)
 
-    if processed:
-        logs.append(processed)
+if processed:
+    st.session_state.logs.append(processed)
+
+logs = st.session_state.logs[-200:]  # keep last 200
 
 
 # =========================
@@ -79,6 +84,29 @@ df = pd.DataFrame(filtered_logs)
 
 
 # =========================
+# ANOMALY DETECTION
+# =========================
+new_anomaly = []
+
+if processed and processed["level"] in ["ERROR", "CRITICAL"]:
+    new_anomaly.append(processed)
+anomalies = detect_anomaly(logs)
+
+
+# =========================
+# EMAIL ALERT (COOLDOWN)
+# =========================
+if "last_alert_time" not in st.session_state:
+    st.session_state.last_alert_time = 0
+
+current_time = time.time()
+
+if new_anomaly and current_time - st.session_state.last_alert_time > 10:
+    send_alert(new_anomaly)
+    st.session_state.last_alert_time = current_time
+
+
+# =========================
 # METRICS
 # =========================
 total_logs = len(filtered_logs)
@@ -90,7 +118,7 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("📄 Total Logs", total_logs)
 col2.metric("❌ Errors", len(errors))
 col3.metric("🔥 Critical", len(critical))
-col4.metric("🚨 Anomalies", len(errors) + len(critical))
+col4.metric("🚨 Anomalies", len(anomalies))
 
 
 # =========================
@@ -125,14 +153,12 @@ else:
 # =========================
 col1, col2 = st.columns(2)
 
-# Service chart
 with col1:
     st.subheader("📊 Logs per Service")
     if not df.empty:
         service_counts = df["service"].value_counts()
         st.bar_chart(service_counts)
 
-# Pie chart
 with col2:
     st.subheader("📊 Severity Distribution")
     if not df.empty:
@@ -143,15 +169,7 @@ with col2:
 
 
 # =========================
-# AUTO REFRESH
+# LIVE REFRESH
 # =========================
-if auto_refresh:
-    time.sleep(5)
-    st.rerun()
-
-
-# =========================
-# MANUAL REFRESH
-# =========================
-if st.button("🔄 Refresh Logs"):
-    st.rerun()
+time.sleep(1)
+st.rerun()
